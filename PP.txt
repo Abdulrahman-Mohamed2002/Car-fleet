@@ -1,0 +1,507 @@
+#include <iostream>
+#include <conio.h>
+#include <string.h>
+#include <fstream>
+#include <sstream>
+#include <windows.h>
+using namespace std;
+void meniu(int op, const char* path);
+void antet()
+{
+    system("Color 0A");
+    cout << "FLOTA AUTO" << endl;
+    cout << "------------------" << endl;
+    cout << "1.Adaugare autoturism" << endl;
+    cout << "2.Stergere autoturism" << endl;
+    cout << "3.Afisare autoturisme" << endl;
+    cout << "4.Cautare autoturisme dupa marca" << endl;
+    cout << "5.Actualizare autoturisme" << endl;
+    cout << "0.Iesire" << endl;
+    cout << "------------------" << endl;
+}
+
+template<typename T>
+bool isInInterval(T number) {
+    return (number >= 0 && number <= 5);
+}
+
+class Proprietar {
+private:
+    string nume;
+    string adresa;
+
+public:
+    void setNume(const string& value) {
+        nume = value;
+    }
+
+    string getNume() const {
+        return nume;
+    }
+
+    void setAdresa(const string& value) {
+        adresa = value;
+    }
+
+    string getAdresa() const {
+        return adresa;
+    }
+};
+
+
+class Autoturism  {
+private:
+    string marca;
+    string model;
+    string caroserie;
+    int anul_fabricatiei;
+    string combustibil;
+    string nr_inmatriculare;
+    int putere;
+    string culoare;
+    int pret;
+    Proprietar proprietar;
+
+public:
+    //supraincarcarea operatorilor << si >>
+     friend ostream& operator<<(ostream& os, const Autoturism& aut) {
+        os << "Marca: " << aut.marca << endl;
+        os << "Model: " << aut.model << endl;
+        os << "Caroserie: " << aut.caroserie << endl;
+        os << "Anul fabricatiei: " << aut.anul_fabricatiei << endl;
+        os << "Combustibil: " << aut.combustibil << endl;
+        os << "Numar de inmatriculare: " << aut.nr_inmatriculare << endl;
+        os << "Putere: " << aut.putere << endl;
+        os << "Culoare: " << aut.culoare << endl;
+        os << "Pret: " << aut.pret << endl;
+
+        return os;
+    }
+
+    friend istream& operator>>(istream& is, Autoturism& aut) {
+        cout << "Marca autoturism:" << endl;
+        is.ignore();
+        getline(is, aut.marca);
+        cout << "Model autoturism:" << endl;
+        getline(is, aut.model);
+        cout << "Caroserie:" << endl;
+        getline(is, aut.caroserie);
+        cout << "Anul fabricatiei:" << endl;
+        is >> aut.anul_fabricatiei;
+        is.ignore();
+        cout << "Combustibil:" << endl;
+        getline(is, aut.combustibil);
+        cout << "Numar de inmatriculare:" << endl;
+        getline(is, aut.nr_inmatriculare);
+        cout << "Putere:" << endl;
+        is >> aut.putere;
+        is.ignore();
+        cout << "Culoare:" << endl;
+        getline(is, aut.culoare);
+        cout << "Pret:" << endl;
+        is >> aut.pret;
+
+        return is;
+    }
+    int nr=0,i=0;
+    // functii de get si de set
+    void setMarca(const string& value) {
+        marca = value;
+    }
+
+    string getMarca() const {
+        return marca;
+    }
+
+    void setProprietar(const Proprietar& value) {
+        proprietar = value;
+    }
+
+    Proprietar getProprietar() const {
+        return proprietar;
+    }
+
+
+
+    void setModel(const string& value) {
+        model = value;
+    }
+
+    string getModel() const {
+        return model;
+    }
+
+
+    void setCaroserie(const string& value) {
+        caroserie = value;
+    }
+
+    string getCaroserie() const {
+        return caroserie;
+    }
+
+    void setAnulFabricatiei(int value) {
+        anul_fabricatiei = value;
+    }
+
+    int getAnulFabricatiei() const {
+        return anul_fabricatiei;
+    }
+
+    void setCombustibil(const string& value) {
+        combustibil = value;
+    }
+
+    string getCombustibil() const {
+        return combustibil;
+    }
+
+    void setNrInmatriculare(const string& value) {
+        nr_inmatriculare = value;
+    }
+
+    string getNrInmatriculare() const {
+        return nr_inmatriculare;
+    }
+
+    void setPutere(int value) {
+        putere = value;
+    }
+
+    int getPutere() const {
+        return putere;
+    }
+
+    void setCuloare(const string& value) {
+        culoare = value;
+    }
+
+    string getCuloare() const {
+        return culoare;
+    }
+
+    void setPret(int value) {
+        pret = value;
+    }
+
+    int getPret() const {
+        return pret;
+    }
+
+    void citesteAutoturism(const char* path) {//functie pentru citirea autoturismelor
+    cout << "Proprietar:" << endl;
+    cout << "Nume: ";
+    cin.ignore();
+    string nume;
+    getline(cin, nume);
+    proprietar.setNume(nume);
+
+    cout << "Adresa: ";
+    string adresa;
+    getline(cin, adresa);
+    proprietar.setAdresa(adresa);
+
+    cout << "Marca autoturism:" << endl;
+    cin.ignore();
+    getline(cin, marca);
+    cout << "Model autoturism:" << endl;
+    getline(cin, model);
+    cout << "Caroserie:" << endl;
+    getline(cin, caroserie);
+    cout << "Anul fabricatiei:" << endl;
+    cin >> anul_fabricatiei;
+    cin.ignore();
+    cout << "Combustibil:" << endl;
+    getline(cin, combustibil);
+    cout << "Numar de inmatriculare:" << endl;
+    getline(cin, nr_inmatriculare);
+    cout << "Putere:" << endl;
+    cin >> putere;
+    cin.ignore();
+    cout << "Culoare:" << endl;
+    getline(cin, culoare);
+    cout << "Pret:" << endl;
+    cin >> pret;
+}
+
+
+      void scrieInFisier(ofstream& file, const char* path) {
+    file << proprietar.getNume() << "," << proprietar.getAdresa() << ","
+         << marca << "," << model << "," << caroserie << ","
+         << anul_fabricatiei << "," << combustibil << ","
+         << nr_inmatriculare << "," << putere << ","
+         << culoare << "," << pret << endl;
+}
+
+
+ void cautare(const char* path) {// functie pentru cautarea  autoturimelor dorite
+        char marca[50];
+        int k = 0;
+        system("Color 0A");
+        cout << "--------------" << endl;
+        cout << "Cautare dupa marca" << endl;
+        cout << "--------------" << endl;
+        cout << "Marca:" << endl;
+        cin.ignore();
+        cin.getline(marca, 50);
+        cout << "--------------" << endl;
+
+        ifstream file(path);
+        if (!file) {
+            cout << "Fisierul nu poate fi accesat." << endl;
+        }
+        else {
+            string line;
+            while (getline(file, line)) {
+                if (!line.empty()) {
+                    stringstream ss(line);
+                    string t_marca, t_model, t_caroserie, t_combustibil, t_nr_inmatriculare, t_culoare;
+                    int t_anul_fabricatiei, t_putere, t_pret;
+
+                    getline(ss, t_marca, ',');
+                    getline(ss, t_model, ',');
+                    getline(ss, t_caroserie, ',');
+                    ss >> t_anul_fabricatiei;
+                    ss.ignore();
+                    getline(ss, t_combustibil, ',');
+                    getline(ss, t_nr_inmatriculare, ',');
+                    ss >> t_putere;
+                    ss.ignore();
+                    getline(ss, t_culoare, ',');
+                    ss >> t_pret;
+
+                    if (strcmp(marca, t_marca.c_str()) == 0) {
+                        k++;
+                        cout << t_marca << endl;
+                        cout << t_model << endl;
+                        cout << t_caroserie << endl;
+                        cout << t_anul_fabricatiei << endl;
+                        cout << t_combustibil << endl;
+                        cout << t_nr_inmatriculare << endl;
+                        cout << t_putere << endl;
+                        cout << t_culoare << endl;
+                        cout << t_pret << endl;
+                        cout << "----------------" << endl;
+                    }
+                }
+            }
+
+            if (k == 0) {
+                cout << "Niciun autoturism gasit" << endl;
+            }
+
+            file.close();
+        }
+    }
+
+
+void stergere(const char* path) {// functie pentru stergerea unui autoturism
+        char nr_inmatriculare[20];
+        int ok = 0;
+        system("Color 0A");
+        cout << "--------------" << endl;
+        cout << "Stergere dupa numarul de inmatriculare" << endl;
+        cout << "--------------" << endl;
+        cout << "Numarul de inmatriculare al autoturismului care se va sterge:";
+        cin.ignore();
+        cin.getline(nr_inmatriculare, 20);
+
+        ifstream file(path);
+        ofstream tempFile("temp.txt", ios::app);
+        if (!file) {
+            cout << "Fisierul nu poate fi accesat." << endl;
+        }
+        else {
+            string line;
+            while (getline(file, line)) {
+                if (!line.empty()) {
+                    line.erase(line.find_last_not_of("\n\r") + 1);
+
+                    string t_marca, t_model, t_caroserie, t_combustibil, t_nr_inmatriculare, t_culoare;
+                    int t_anul_fabricatiei, t_putere, t_pret;
+
+                    sscanf(line.c_str(), "%[^,],%[^,],%[^,],%d,%[^,],%[^,],%d,%[^,],%d", &t_marca[0], &t_model[0], &t_caroserie[0],
+                        &t_anul_fabricatiei, &t_combustibil[0], &t_nr_inmatriculare[0], &t_putere, &t_culoare[0], &t_pret);
+
+                    if (strcmp(nr_inmatriculare, t_nr_inmatriculare.c_str()) != 0) {
+                        tempFile << line << endl;
+                    }
+                    else if (strcmp(nr_inmatriculare, t_nr_inmatriculare.c_str()) == 0) {
+                        ok = 1;
+                        cout << "Autoturismul a fost sters cu succes" << endl;
+                    }
+                }
+            }
+
+            file.close();
+            tempFile.close();
+
+            remove(path);
+            rename("temp.txt", path);
+
+            if (ok == 0) {
+                cout << "Numar incorect" << endl;
+            }
+        }
+    }
+
+
+ void afisaresimpla(const char* path) {// functie pentru afisarea tuturor autoturismelor din fisier
+        int ok2 = 0;
+        ifstream file(path);
+        system("Color 0A");
+        cout << "--------------" << endl;
+        cout << "Afisare simpla" << endl;
+        cout << "--------------" << endl;
+
+        if (!file) {
+            cout << "Fisierul nu poate fi accesat." << endl;
+        }
+        else {
+            char c;
+            while (file.get(c)) {
+                ok2 = 1;
+                cout << c;
+            }
+
+            file.close();
+        }
+
+        if (ok2 == 0) {
+            cout << "Fisierul este gol..." << endl;
+        }
+
+        cout << "--------------" << endl;
+    }
+
+   void actualizare(const char* path) {// functie pentru actualizarea autoturismelor
+        int k3 = 0;
+        char nr_inmatriculare[50];
+        system("Color 0A");
+        cout << "--------------" << endl;
+        cout << "Nr_inmatriculare:" << endl;
+        cin.ignore();
+        cin.getline(nr_inmatriculare, 50);
+        cout << "--------------" << endl;
+
+        ifstream file(path);
+        ofstream tempFile("temp.txt", ios::app);
+
+        if (!file) {
+            cout << "Fisierul nu poate fi accesat." << endl;
+        }
+        else {
+            string line;
+
+            while (getline(file, line)) {
+                if (!line.empty()) {
+                    line.erase(line.find_last_not_of("\n\r") + 1);
+
+                    string t_marca, t_model, t_caroserie, t_combustibil, t_nr_inmatriculare, t_culoare;
+                    int t_anul_fabricatiei, t_putere, t_pret;
+
+                    sscanf(line.c_str(), "%[^,],%[^,],%[^,],%d,%[^,],%[^,],%d,%[^,],%d", &t_marca[0], &t_model[0], &t_caroserie[0],
+                        &t_anul_fabricatiei, &t_combustibil[0], &t_nr_inmatriculare[0], &t_putere, &t_culoare[0], &t_pret);
+
+                   if (strcmp(nr_inmatriculare, t_nr_inmatriculare.c_str()) != 0) {
+                        tempFile << line << endl;
+                    }
+                    else {
+                        if (nr_inmatriculare == t_nr_inmatriculare) {
+                            k3++;
+                               cout << "Marca autoturism:" << endl;
+        cin.ignore();
+        getline(cin, marca);
+        cout << "Model autoturism:" << endl;
+        getline(cin, model);
+        cout << "Caroserie:" << endl;
+        getline(cin, caroserie);
+        cout << "Anul fabricatiei:" << endl;
+        cin >> anul_fabricatiei;
+        cin.ignore();
+        cout << "Combustibil:" << endl;
+        getline(cin, combustibil);
+        cout << "Numar de inmatriculare:" << endl;
+        cin.getline(nr_inmatriculare,50);
+        cout << "Putere:" << endl;
+        cin >> putere;
+        cin.ignore();
+        cout << "Culoare:" << endl;
+        getline(cin, culoare);
+        cout << "Pret:" << endl;
+        cin >> pret;
+                            tempFile << marca << "," << model << "," << caroserie << ","
+                                << anul_fabricatiei << "," << combustibil << ","
+                                << nr_inmatriculare << "," << putere << ","
+                                << culoare << "," << pret << endl;
+
+                            cout << "Autoturismul a fost actualizat cu succes..." << endl;
+                            cout << "--------------" << endl;
+                        }
+                    }
+                }
+            }
+
+            file.close();
+            tempFile.close();
+
+            remove(path);
+            rename("temp.txt", path);
+
+            if (k3 == 0) {
+                cout << "Numar incorect" << endl;
+            }
+        }
+    }
+
+public:
+void meniu(int op, const char* path) {// functia meniu
+    Autoturism aut;
+    ofstream file(path, ios::app); // Se deschide fisierul in append mode
+
+    switch (op) {
+        case 1: {
+            aut.citesteAutoturism(path);
+            aut.scrieInFisier(file, path);
+            nr++;
+            i++;
+            break;
+        }
+        case 2:
+            aut.stergere(path);
+            break;
+        case 3:
+            aut.afisaresimpla(path);
+            break;
+        case 4:
+            aut.cautare(path);
+            break;
+        case 5:
+            aut.actualizare(path);
+            break;
+        default:
+            cout << "EXIT!" << endl;
+    }
+
+    file.close();
+}
+};
+
+int main(int argc, char* argv[]) {
+    const char* path = "fisier.txt";
+    int op;
+    Autoturism aut; // Se creează un obiect de tipul clasei Autoturism
+
+    do {
+        antet();
+        std::cout << "Introduceti optiunea: ";
+        std::cin >> op;
+        if (!isInInterval(op)) {
+            std::cout << "Optiunea nu este in intervalul [1, 5]. Va rugam introduceti o optiune valida.\n";
+            continue;
+        }
+        aut.meniu(op, path);
+    } while (op > 0 && op <= 5);
+
+    return 0;
+}
